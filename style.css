@@ -1,0 +1,91 @@
+/* Global Styles */
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f4f4f4;
+    margin: 0;
+    padding: 0;
+    color: #333;
+}
+
+h1, h2 {
+    color: #2c3e50;
+}
+
+/* Center the content */
+.container {
+    width: 80%;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+/* Form Styling */
+form {
+    background-color: #ffffff;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    margin-bottom: 30px;
+}
+
+label {
+    font-weight: bold;
+    margin-right: 10px;
+}
+
+input[type="file"], input[type="text"], select, button {
+    padding: 10px;
+    font-size: 14px;
+    margin: 10px 0;
+    width: 100%;
+    max-width: 400px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+}
+
+button {
+    background-color: #3498db;
+    color: white;
+    cursor: pointer;
+    border: none;
+    font-weight: bold;
+}
+
+button:hover {
+    background-color: #2980b9;
+}
+
+/* Styling for Image Output */
+img {
+    max-width: 100%;
+    height: auto;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+/* Layout for Image Generation and File Upload */
+form h2 {
+    color: #16a085;
+    font-size: 1.5em;
+    margin-bottom: 15px;
+}
+
+form .form-group {
+    margin-bottom: 15px;
+}
+
+hr {
+    border: 1px solid #ccc;
+}
+
+/* Responsive Styling */
+@media (max-width: 768px) {
+    .container {
+        width: 95%;
+    }
+
+    input[type="file"], input[type="text"], select, button {
+        width: 100%;
+    }
+}
+
