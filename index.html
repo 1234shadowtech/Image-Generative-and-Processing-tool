@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Image Processing and Generation</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <style>
+        .parameter-controls {
+            display: none;
+            margin: 15px 0;
+            padding: 15px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        select, input {
+            margin: 5px 0;
+            padding: 8px;
+            border-radius: 4px;
+            border: 1px solid #ddd;
+        }
+        button {
+            background-color: #4CAF50;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #45a049;
+        }
+        #style-transfer-params {
+            display: none;
+            margin: 15px 0;
+            padding: 15px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Image Operations, Style Transfer, and Image Generation</h1>
+        
+        <form method="POST" enctype="multipart/form-data">
+            <h2>Upload Image and Choose Operation</h2>
+            
+            <label for="file">Upload Image:</label>
+            <input type="file" name="file" id="file" required accept="image/*"><br><br>
+            
+            <label for="operation">Choose Operation:</label>
+            <select name="operation" id="operation" onchange="showParameters(this.value)">
+                <option value="">--Select Operation--</option>
+                <option value="gray_color">Convert to Grayscale</option>
+                <option value="resize">Resize Image</option>
+                <option value="rotate">Rotate Image</option>
+                <option value="brightness">Adjust Brightness</option>
+                <option value="contrast">Adjust Contrast</option>
+                <option value="apply_blur">Apply Blur</option>
+                <option value="gaussian_blur">Gaussian Blur</option>
+                <option value="sepia">Sepia Filter</option>
+                <option value="sharpen">Sharpen</option>
+                <option value="edge_detect">Edge Detection</option>
+                <option value="invert">Invert Colors</option>
+                <option value="watermark">Add Watermark</option>
+                <option value="mirror">Mirror Image</option>
+                <option value="style_transfer">Style Transfer</option>
+            </select><br><br>
+            
+            <!-- Parameter controls for different operations -->
+            <div id="resize-params" class="parameter-controls">
+                <label for="width">Width (pixels):</label>
+                <input type="number" name="width" id="width" min="1" max="4096" value="300"><br><br>
+                <label for="height">Height (pixels):</label>
+                <input type="number" name="height" id="height" min="1" max="4096" value="300">
+            </div>
+
+            <div id="rotate-params" class="parameter-controls">
+                <label for="angle">Rotation Angle (degrees):</label>
+                <input type="number" name="angle" id="angle" value="90" step="90">
+            </div>
+
+            <div id="brightness-params" class="parameter-controls">
+                <label for="brightness_factor">Brightness Factor:</label>
+                <input type="number" name="brightness_factor" id="brightness_factor" value="2.0" step="0.1" min="0.1" max="5.0">
+            </div>
+
+            <div id="contrast-params" class="parameter-controls">
+                <label for="contrast_factor">Contrast Factor:</label>
+                <input type="number" name="contrast_factor" id="contrast_factor" value="1.5" step="0.1" min="0.1" max="5.0">
+            </div>
+
+            <div id="blur-params" class="parameter-controls">
+                <label for="blur_radius">Blur Radius:</label>
+                <input type="number" name="blur_radius" id="blur_radius" value="2" min="1" max="10">
+            </div>
+
+            <div id="watermark-params" class="parameter-controls">
+                <label for="watermark_text">Watermark Text:</label>
+                <input type="text" name="watermark_text" id="watermark_text" value="Watermark">
+            </div>
+
+            <div id="style-transfer-params" class="parameter-controls">
+                <label for="style_file">Style Image:</label>
+                <input type="file" name="style_file" id="style_file" accept="image/*"><br><br>
+                
+                <label for="num_steps">Number of Steps:</label>
+                <input type="number" name="num_steps" id="num_steps" value="300" min="100" max="1000"><br><br>
+                
+                <label for="style_weight">Style Weight:</label>
+                <input type="number" name="style_weight" id="style_weight" value="1000000" step="100000"><br><br>
+                
+                <label for="content_weight">Content Weight:</label>
+                <input type="number" name="content_weight" id="content_weight" value="0.1" step="0.1">
+            </div>
+
+            <label for="style">Choose Style (for Style Transfer):</label>
+            <select name="style" id="style">
+                <option value="">--Select Style--</option>
+                {% for style in styles %}
+                <option value="{{ style }}">{{ style }}</option>
+                {% endfor %}
+            </select><br><br>
+            
+            <button type="submit">Process Image</button>
+        </form>
+        
+        <hr>
+        
+        <h2>Generate Image from Text Prompt</h2>
+        <form method="POST">
+            <label for="prompt">Enter Prompt:</label>
+            <input type="text" name="prompt" id="prompt" required><br><br>
+            <button type="submit">Generate Image</button>
+        </form>
+    </div>
+
+    <script>
+        function showParameters(operation) {
+            // Hide all parameter controls first
+            document.querySelectorAll('.parameter-controls').forEach(div => {
+                div.style.display = 'none';
+            });
+            
+            // Show relevant parameters based on operation
+            switch(operation) {
+                case 'resize':
+                    document.getElementById('resize-params').style.display = 'block';
+                    break;
+                case 'rotate':
+                    document.getElementById('rotate-params').style.display = 'block';
+                    break;
+                case 'brightness':
+                    document.getElementById('brightness-params').style.display = 'block';
+                    break;
+                case 'contrast':
+                    document.getElementById('contrast-params').style.display = 'block';
+                    break;
+                case 'apply_blur':
+                    document.getElementById('blur-params').style.display = 'block';
+                    break;
+                case 'watermark':
+                    document.getElementById('watermark-params').style.display = 'block';
+                    break;
+                case 'style_transfer':
+                    document.getElementById('style-transfer-params').style.display = 'block';
+                    break;
+            }
+        }
+    </script>
+</body>
+</html>
